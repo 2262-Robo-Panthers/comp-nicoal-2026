@@ -20,9 +20,9 @@ public class RobotContainer {
   );
 
   private Shooter m_shooter = new Shooter(
-    Revolutions.per(Minute).of(3000.0),
-    Revolutions.per(Minute).of(1000.0),
-    Revolutions.per(Minute).of(100.0)
+    Revolutions.per(Minute).of(0.001),
+    Revolutions.per(Minute).of(0.001),
+    Revolutions.per(Minute).of(10000.0)
   );
 
   private Climb m_climb = new Climb(

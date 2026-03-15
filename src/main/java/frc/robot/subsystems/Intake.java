@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.wpilibj.PneumaticsModuleType.REVPH;
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 
 import com.revrobotics.PersistMode;
@@ -22,12 +23,13 @@ public class Intake extends SubsystemBase {
 
   private SparkMax m_rollers = new SparkMax(61, SparkMax.MotorType.kBrushed);
 
-  private Compressor m_compressor = new Compressor(REVPH);
-  private DoubleSolenoid m_slndA = new DoubleSolenoid(REVPH, 0, 1);
-  private DoubleSolenoid m_slndB = new DoubleSolenoid(REVPH, 2, 3);
+  private Compressor m_compressor = new Compressor(11, REVPH);
+  private DoubleSolenoid m_solenoid = new DoubleSolenoid(11, REVPH, 7, 6);
 
   public Intake(double speed) {
     m_speed = speed;
+
+    m_solenoid.set(kReverse);
 
     SparkMaxConfig config = new SparkMaxConfig();
 
@@ -45,10 +47,7 @@ public class Intake extends SubsystemBase {
   public Command cmd_setExtension(boolean extended) {
     DoubleSolenoid.Value value = extended ? kForward : kReverse;
 
-    return runOnce(() -> {
-      m_slndA.set(value);
-      m_slndB.set(value);
-    });
+    return runOnce(() -> m_solenoid.set(value));
   }
 
   public Command cmd_setRollers(boolean on) {
@@ -68,6 +67,8 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("Intake.Extended", m_solenoid.get() == kForward);
+    SmartDashboard.putBoolean("Intake.Spinning", m_rollers.get() > 0.0);
+    SmartDashboard.putBoolean("Intake.TankFull", !m_compressor.getPressureSwitchValue());
   }
 }

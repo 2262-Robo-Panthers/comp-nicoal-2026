@@ -45,17 +45,17 @@ public class Shooter extends SubsystemBase {
 
     configA
       .idleMode(IdleMode.kCoast) // TODO need to change this or can it active brake when necessary?
-      .smartCurrentLimit(20);
-    // configA.encoder
-    //   .positionConversionFactor(1.0)
-    //   .velocityConversionFactor(1.0); // TODO is this necessary?
+      .smartCurrentLimit(40);
+    configA.encoder
+      .positionConversionFactor(1.0 / 5676.0)
+      .velocityConversionFactor(1.0);
     configA.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .outputRange(-1.0, 1.0)
       .pid(0.0, 0.0, 0.0); // TODO is PID necessary? tune if so
     configA.closedLoop.maxMotion
       .cruiseVelocity(m_flywheelSpeed.in(Revolutions.per(Minute))) // TODO tune these
-      .maxAcceleration(500.0)
+      .maxAcceleration(0.01)
       .allowedProfileError(1.0);
 
     m_ctrlA.configure(
