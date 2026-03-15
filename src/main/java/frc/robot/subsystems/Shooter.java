@@ -69,7 +69,7 @@ public class Shooter extends SubsystemBase {
     configB
       .idleMode(IdleMode.kCoast)
       .smartCurrentLimit(20)
-      .follow(m_ctrlA);
+      .follow(m_ctrlA, true);
 
     m_ctrlB.configure(
       configB,

@@ -15,12 +15,12 @@ import com.revrobotics.spark.*;
 import com.revrobotics.spark.config.*;
 import com.revrobotics.spark.config.SparkBaseConfig.*;
 
-// TODO add compressor data to Elastic
+// TODO add compressor data and solenoid and roller status to Elastic
 
 public class Intake extends SubsystemBase {
   private double m_speed;
 
-  private SparkMax m_ctrl = new SparkMax(61, SparkMax.MotorType.kBrushless);
+  private SparkMax m_rollers = new SparkMax(61, SparkMax.MotorType.kBrushed);
 
   private Compressor m_compressor = new Compressor(REVPH);
   private DoubleSolenoid m_slndA = new DoubleSolenoid(REVPH, 0, 1);
@@ -35,7 +35,7 @@ public class Intake extends SubsystemBase {
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(20);
 
-    m_ctrl.configure(
+    m_rollers.configure(
       config,
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters
@@ -53,16 +53,16 @@ public class Intake extends SubsystemBase {
 
   public Command cmd_setRollers(boolean on) {
     return runOnce(() -> {
-      m_ctrl.set(on ? m_speed : 0.0);
+      m_rollers.set(on ? m_speed : 0.0);
     });
   }
 
   public Command cmd_toggleRollers() {
     return runOnce(() -> {
-      if (m_ctrl.get() == 0.0)
-        m_ctrl.set(m_speed);
+      if (m_rollers.get() == 0.0)
+        m_rollers.set(m_speed);
       else
-        m_ctrl.set(0.0);
+        m_rollers.set(0.0);
     });
   }
 

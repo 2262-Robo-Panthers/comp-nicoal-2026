@@ -5,6 +5,8 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 
@@ -21,7 +23,13 @@ public class RobotContainer {
     Revolutions.per(Minute).of(100.0)
   );
 
+  private Climb m_climb = new Climb(
+    Inches.of(12.0) // TODO measure this
+  );
+
   private CommandXboxController m_operator = new CommandXboxController(0);
+
+  private static final double kControllerDeadband = 0.07;
 
   public RobotContainer() {
     configureBindings();
@@ -66,8 +74,8 @@ public class RobotContainer {
     {
       m_shooter.setDefaultCommand(
         m_shooter.cmd_manual(
-          () -> -m_operator.getLeftY(),
-          () -> -m_operator.getRightY())
+          () -> MathUtil.applyDeadband(-m_operator.getLeftY(), kControllerDeadband),
+          () -> MathUtil.applyDeadband(-m_operator.getRightY(), kControllerDeadband))
       );
 
       // Hold X to shoot (controlling the feed); press with right bumper to lock
@@ -100,6 +108,15 @@ public class RobotContainer {
         .onTrue(
           m_shooter.cmd_stop()
         );
+    }
+
+    /*** Climb */
+    {
+      m_climb.setDefaultCommand(
+        m_climb.cmd_moveSetpoint(() -> MathUtil.applyDeadband(
+          m_operator.getRightTriggerAxis() - m_operator.getLeftTriggerAxis(),
+          kControllerDeadband))
+      );
     }
   }
 
