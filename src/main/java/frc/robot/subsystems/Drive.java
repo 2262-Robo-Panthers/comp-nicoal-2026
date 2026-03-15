@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.util.SwerveConstants.Drive.*;
+
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.hal.*;
@@ -12,8 +14,6 @@ import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.*;
-
-import static frc.robot.SwerveConstants.Drive.*;
 
 public class Drive extends SubsystemBase {
   // Create MAXSwerveModules
