@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj2.command.*;
 
 import com.revrobotics.PersistMode;
@@ -18,7 +20,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.*;
 // TODO add to Elastic: current RPMs, isAtSpeed, setpoints
 
 public class Shooter extends SubsystemBase {
-  private double m_flywheelRpm, m_feedRpm, m_shootableThreshold;
+  private AngularVelocity m_flywheelSpeed, m_feedSpeed, m_shootableThreshold;
 
   private SparkFlex m_ctrlA = new SparkFlex(39, SparkFlex.MotorType.kBrushless);
   private SparkFlex m_ctrlB = new SparkFlex(40, SparkFlex.MotorType.kBrushless);
@@ -29,9 +31,9 @@ public class Shooter extends SubsystemBase {
 
   private SparkClosedLoopController m_feed = m_ctrlC.getClosedLoopController();
 
-  public Shooter(double flywheelRpm, double feedRpm, double shootableThreshold) {
-    m_flywheelRpm = flywheelRpm;
-    m_feedRpm = feedRpm;
+  public Shooter(AngularVelocity flywheelSpeed, AngularVelocity feedSpeed, AngularVelocity shootableThreshold) {
+    m_flywheelSpeed = flywheelSpeed;
+    m_feedSpeed = feedSpeed;
     m_shootableThreshold = shootableThreshold;
 
     configureFlywheel();
@@ -52,7 +54,7 @@ public class Shooter extends SubsystemBase {
       .outputRange(-1.0, 1.0)
       .pid(0.0, 0.0, 0.0); // TODO is PID necessary? tune if so
     configA.closedLoop.maxMotion
-      .cruiseVelocity(m_flywheelRpm) // TODO tune these
+      .cruiseVelocity(m_flywheelSpeed.in(Revolutions.per(Minute))) // TODO tune these
       .maxAcceleration(500.0)
       .allowedProfileError(1.0);
 
@@ -90,7 +92,7 @@ public class Shooter extends SubsystemBase {
       .outputRange(-1.0, 1.0)
       .pid(0.5, 0.0, 0.0);
     configC.closedLoop.maxMotion
-      .cruiseVelocity(m_feedRpm) // TODO tune these
+      .cruiseVelocity(m_feedSpeed.in(Revolutions.per(Minute))) // TODO tune these
       .maxAcceleration(5.0)
       .allowedProfileError(0.1);
 
@@ -114,7 +116,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void flywheel(double speed) {
-    m_flywheel.setSetpoint(speed * m_flywheelRpm, ControlType.kMAXMotionVelocityControl);
+    m_flywheel.setSetpoint(speed * m_flywheelSpeed.in(Revolutions.per(Minute)), ControlType.kMAXMotionVelocityControl);
   }
 
   public Command cmd_feed(double speed) {
@@ -122,12 +124,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void feed(double speed) {
-    m_feed.setSetpoint(speed * m_feedRpm, ControlType.kMAXMotionVelocityControl);
+    m_feed.setSetpoint(speed * m_feedSpeed.in(Revolutions.per(Minute)), ControlType.kMAXMotionVelocityControl);
   }
 
   public boolean isAtSpeed() {
     return Math.abs(m_ctrlA.getEncoder().getVelocity() - m_flywheel.getSetpoint())
-      <= m_shootableThreshold;
+      <= m_shootableThreshold.in(Revolutions.per(Minute));
   }
 
   public Command cmd_waitSpinUp() {

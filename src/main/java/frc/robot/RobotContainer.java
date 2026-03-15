@@ -4,13 +4,18 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
-  private Shooter m_shooter = new Shooter(3000.0, 10.0, 100.0);
+  private Shooter m_shooter = new Shooter(
+    Revolutions.per(Minute).of(3000.0),
+    Revolutions.per(Minute).of(1000.0),
+    Revolutions.per(Minute).of(100.0)
+  );
 
   private CommandXboxController m_operator = new CommandXboxController(0);
 
