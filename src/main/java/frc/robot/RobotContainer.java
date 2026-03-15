@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.button.*;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
+  private Drive m_drive = new Drive();
+
   private Intake m_intake = new Intake(
     /* roller strength */ 1.0
   );
@@ -27,7 +29,8 @@ public class RobotContainer {
     Inches.of(12.0) // TODO measure this
   );
 
-  private CommandXboxController m_operator = new CommandXboxController(0);
+  private CommandXboxController m_driver = new CommandXboxController(0);
+  private CommandXboxController m_operator = new CommandXboxController(1);
 
   private static final double kControllerDeadband = 0.07;
 
@@ -36,6 +39,30 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    /*** Drive */
+    {
+      m_drive.setDefaultCommand(
+        m_drive.cmd_manualDrive(
+          () -> MathUtil.applyDeadband(-m_driver.getRightY(), kControllerDeadband),
+          () -> MathUtil.applyDeadband(-m_driver.getRightX(), kControllerDeadband),
+          () -> MathUtil.applyDeadband(-m_driver.getLeftX(), kControllerDeadband))
+      );
+
+      // Press Back to define current heading as forward
+
+      m_driver.back()
+        .onTrue(
+          new InstantCommand(() -> m_drive.zeroHeading(), m_drive)
+        );
+
+      // Hold Start for X-formation
+
+      m_driver.start()
+        .whileTrue(
+          new StartEndCommand(() -> m_drive.setX(), () -> {}, m_drive)
+        );
+    }
+
     /*** Intake */
     {
       // Press Back to toggle rollers
