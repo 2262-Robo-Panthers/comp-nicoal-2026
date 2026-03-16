@@ -43,7 +43,7 @@ public class Climb extends SubsystemBase {
     configA.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .outputRange(-1.0, 1.0)
-      .pid(0.0, 0.0, 0.0); // TODO is PID necessary? tune if so
+      .pid(0.0, 0.0, 0.0);
     configA.closedLoop.maxMotion
       .cruiseVelocity(6.0 / kCircumference.magnitude()) // TODO tune these
       .maxAcceleration(12.0 / kCircumference.magnitude())

@@ -19,11 +19,7 @@ public class RobotContainer {
     /* roller strength */ 1.0
   );
 
-  private Shooter m_shooter = new Shooter(
-    Revolutions.per(Minute).of(0.001),
-    Revolutions.per(Minute).of(0.001),
-    Revolutions.per(Minute).of(10000.0)
-  );
+  private Shooter m_shooter = new Shooter();
 
   private Climb m_climb = new Climb(
     Inches.of(12.0) // TODO measure this
@@ -102,31 +98,24 @@ public class RobotContainer {
       m_shooter.setDefaultCommand(
         m_shooter.cmd_manual(
           () -> MathUtil.applyDeadband(-m_operator.getLeftY(), kControllerDeadband),
-          () -> MathUtil.applyDeadband(-m_operator.getRightY(), kControllerDeadband))
+          () -> MathUtil.applyDeadband(-m_operator.getRightY(), kControllerDeadband),
+          () -> (
+            m_operator.getHID().getPOV() == 180 ?
+            m_operator.getRightTriggerAxis() - m_operator.getLeftTriggerAxis() :
+            0.0
+          ))
       );
 
       // Hold X to shoot (controlling the feed); press with right bumper to lock
 
-      m_operator.x().and(m_operator.rightBumper().negate())
+      m_operator.povLeft().and(m_operator.rightBumper().negate())
         .whileTrue(
           m_shooter.cmd_manualShoot(1.0, () -> -m_operator.getRightY()) // TODO change speed depending on distance
         );
 
-      m_operator.x().and(m_operator.rightBumper())
+      m_operator.povLeft().and(m_operator.rightBumper())
         .onTrue(
           m_shooter.cmd_manualShoot(1.0, () -> -m_operator.getRightY()) // TODO change speed depending on distance
-        );
-
-      // Hold Y to shoot rapid-fire; press with right bumper to lock
-
-      m_operator.y().and(m_operator.rightBumper().negate())
-        .whileTrue(
-          m_shooter.cmd_autoShoot(1.0) // TODO change speed depending on distance
-        );
-
-      m_operator.y().and(m_operator.rightBumper())
-        .onTrue(
-          m_shooter.cmd_autoShoot(1.0) // TODO change speed depending on distance
         );
 
       // Press Start to stop the whole shooter

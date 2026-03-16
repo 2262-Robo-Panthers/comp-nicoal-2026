@@ -16,8 +16,6 @@ import com.revrobotics.spark.*;
 import com.revrobotics.spark.config.*;
 import com.revrobotics.spark.config.SparkBaseConfig.*;
 
-// TODO add compressor data and solenoid and roller status to Elastic
-
 public class Intake extends SubsystemBase {
   private double m_speed;
 
