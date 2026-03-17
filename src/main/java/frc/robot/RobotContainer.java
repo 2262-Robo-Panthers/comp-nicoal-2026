@@ -63,31 +63,31 @@ public class RobotContainer {
     {
       // Press Back to toggle rollers
 
-      m_operator.back()
+      m_driver.back()
         .onTrue(
           m_intake.cmd_toggleRollers()
         );
 
       // Press A to retract; with right bumper to also disable rollers
 
-      m_operator.a()
+      m_driver.a()
         .onTrue(
           m_intake.cmd_setExtension(false)
         );
 
-      m_operator.a().and(m_operator.rightBumper())
+      m_driver.a().and(m_operator.rightBumper())
         .onTrue(
           m_intake.cmd_setRollers(false)
         );
 
       // Press B to extend; with right bumper to also enable rollers
 
-      m_operator.b()
+      m_driver.b()
         .onTrue(
           m_intake.cmd_setExtension(true)
         );
 
-      m_operator.b().and(m_operator.rightBumper())
+      m_driver.b().and(m_operator.rightBumper())
         .onTrue(
           m_intake.cmd_setRollers(true)
         );
@@ -129,10 +129,11 @@ public class RobotContainer {
     /*** Climb */
     {
       m_climb.setDefaultCommand(
-        m_climb.cmd_moveSetpoint(() -> MathUtil.applyDeadband(
-          m_operator.getRightTriggerAxis() - m_operator.getLeftTriggerAxis(),
-          kControllerDeadband))
-      );
+        m_climb.cmd_moveSetpoint(() ->
+          m_operator.getHID().getPOV() == 90 ?
+          MathUtil.applyDeadband(m_operator.getRightTriggerAxis() - m_operator.getLeftTriggerAxis(), kControllerDeadband) :
+          0.0
+        ));
     }
   }
 

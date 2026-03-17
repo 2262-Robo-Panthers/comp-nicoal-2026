@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 
 import com.revrobotics.PersistMode;
@@ -16,8 +17,6 @@ import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.*;
 import com.revrobotics.spark.config.SparkBaseConfig.*;
-
-// TODO add to Elastic: setpoint, actual position, isAtPosition
 
 public class Climb extends SubsystemBase {
   private Distance m_travelLength;
@@ -44,10 +43,11 @@ public class Climb extends SubsystemBase {
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .outputRange(-1.0, 1.0)
       .pid(0.0, 0.0, 0.0);
+    // if it doesn't work then comment out the next 4 lines and change line 82 to kPosition
     configA.closedLoop.maxMotion
       .cruiseVelocity(6.0 / kCircumference.magnitude()) // TODO tune these
       .maxAcceleration(12.0 / kCircumference.magnitude())
-      .allowedProfileError(0.5);
+      .allowedProfileError(2.0);
 
     m_ctrlA.configure(
       configA,
@@ -72,7 +72,7 @@ public class Climb extends SubsystemBase {
   }
 
   public Command cmd_moveSetpoint(DoubleSupplier delta) {
-    return run(() -> moveSetpoint(delta.getAsDouble()));
+    return run(() -> moveSetpoint(delta.getAsDouble()*(1.0/50)));
   }
 
   public void setSetpoint(double setpoint) {
@@ -86,6 +86,9 @@ public class Climb extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    double position = m_ctrlA.getEncoder().getPosition();
+    SmartDashboard.putNumber("Climb.Setpoint", m_setpoint);
+    SmartDashboard.putNumber("Climb.Position", position);
+    SmartDashboard.putBoolean("Climb.IsInPosition", Math.abs(position - m_setpoint) < 0.05);
   }
 }
