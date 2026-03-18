@@ -21,9 +21,9 @@ public class RobotContainer {
 
   private Shooter m_shooter = new Shooter();
 
-  private Climb m_climb = new Climb(
+  /*** private Climb m_climb = new Climb(
     Inches.of(12.0) // TODO measure this
-  );
+  ); */
 
   private CommandXboxController m_driver = new CommandXboxController(0);
   private CommandXboxController m_operator = new CommandXboxController(1);
@@ -105,6 +105,7 @@ public class RobotContainer {
             0.0
           ))
       );
+      // Hood up/down with D-pad
 
       // Hold X to shoot (controlling the feed); press with right bumper to lock
 
@@ -127,14 +128,14 @@ public class RobotContainer {
     }
 
     /*** Climb */
-    {
+    /*** {
       m_climb.setDefaultCommand(
         m_climb.cmd_moveSetpoint(() ->
           m_operator.getHID().getPOV() == 90 ?
           MathUtil.applyDeadband(m_operator.getRightTriggerAxis() - m_operator.getLeftTriggerAxis(), kControllerDeadband) :
           0.0
         ));
-    }
+    }*/
   }
 
   public Command getAutonomousCommand() {
