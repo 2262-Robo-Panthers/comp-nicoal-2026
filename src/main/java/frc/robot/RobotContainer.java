@@ -7,9 +7,11 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 
+import frc.robot.auto.Auto;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -25,6 +27,15 @@ public class RobotContainer {
     Inches.of(12.0) // TODO measure this
   ); */
 
+  private Auto m_auto = new Auto(
+    Commands.none()
+      .withName("Do Nothing"),
+    // TODO add autonomous commands
+    m_drive.cmd_manualDrive(() -> 1.0, () -> 0.0, () -> 0.0)
+      .raceWith(Commands.waitSeconds(3.0))
+      .withName("Drive Forward 3s")
+  );
+
   private CommandXboxController m_driver = new CommandXboxController(0);
   private CommandXboxController m_operator = new CommandXboxController(1);
 
@@ -32,6 +43,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+
+    SmartDashboard.putData("Choose Auto", m_auto.getChooser());
   }
 
   private void configureBindings() {
@@ -139,6 +152,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return m_auto.getChooser().getSelected();
   }
 }
