@@ -33,7 +33,15 @@ public class RobotContainer {
     // TODO add autonomous commands
     m_drive.cmd_manualDrive(() -> 1.0, () -> 0.0, () -> 0.0)
       .raceWith(Commands.waitSeconds(3.0))
-      .withName("Drive Forward 3s")
+      .withName("Drive Forward 3s"),
+      // Add auto
+    Commands.sequence(
+      m_shooter.cmd_manualShoot(1.0, () -> 0.0)
+        .raceWith(Commands.waitSeconds(3.0)),
+      m_shooter.cmd_manualShoot(1.0, () -> 1.0)
+        .raceWith(Commands.waitSeconds(6.0)),
+      m_shooter.cmd_stop()
+    ).withName("Shoot")
   );
 
   private CommandXboxController m_driver = new CommandXboxController(0);
@@ -110,7 +118,7 @@ public class RobotContainer {
     {
       m_shooter.setDefaultCommand(
         m_shooter.cmd_manual(
-          () -> MathUtil.applyDeadband(-m_operator.getLeftY(), kControllerDeadband),
+          () -> MathUtil.applyDeadband(-m_operator.getLeftY() * 0.85, kControllerDeadband),
           () -> MathUtil.applyDeadband(-m_operator.getRightY(), kControllerDeadband),
           () -> (
             m_operator.getHID().getPOV() == 180 ?
