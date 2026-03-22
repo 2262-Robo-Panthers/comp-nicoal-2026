@@ -84,31 +84,31 @@ public class RobotContainer {
     {
       // Press Back to toggle rollers
 
-      m_driver.back()
+      m_operator.back()
         .onTrue(
           m_intake.cmd_toggleRollers()
         );
 
       // Press A to retract; with right bumper to also disable rollers
 
-      m_driver.a()
+      m_operator.a()
         .onTrue(
           m_intake.cmd_setExtension(false)
         );
 
-      m_driver.a().and(m_operator.rightBumper())
+      m_operator.a().and(m_operator.rightBumper())
         .onTrue(
           m_intake.cmd_setRollers(false)
         );
 
       // Press B to extend; with right bumper to also enable rollers
 
-      m_driver.b()
+      m_operator.b()
         .onTrue(
           m_intake.cmd_setExtension(true)
         );
 
-      m_driver.b().and(m_operator.rightBumper())
+      m_operator.b().and(m_operator.rightBumper())
         .onTrue(
           m_intake.cmd_setRollers(true)
         );
@@ -130,6 +130,7 @@ public class RobotContainer {
 
       // Hold X to shoot (controlling the feed); press with right bumper to lock
 
+      //D pad left 100% power
       m_operator.povLeft().and(m_operator.rightBumper().negate())
         .whileTrue(
           m_shooter.cmd_manualShoot(1.0, () -> -m_operator.getRightY()) // TODO change speed depending on distance
@@ -138,6 +139,17 @@ public class RobotContainer {
       m_operator.povLeft().and(m_operator.rightBumper())
         .onTrue(
           m_shooter.cmd_manualShoot(1.0, () -> -m_operator.getRightY()) // TODO change speed depending on distance
+        );
+
+      //D pad right 70% power
+      m_operator.povRight().and(m_operator.rightBumper().negate())
+        .whileTrue(
+          m_shooter.cmd_manualShoot(0.7, () -> -m_operator.getRightY())
+        );
+
+      m_operator.povRight().and(m_operator.rightBumper())
+        .onTrue(
+          m_shooter.cmd_manualShoot(0.7, () -> -m_operator.getRightY())
         );
 
       // Press Start to stop the whole shooter
