@@ -38,7 +38,7 @@ public class MAXSwerveModule {
 
     driveConfig
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(50); // TODO why 50 if the breaker is 40?
+      .smartCurrentLimit(35); // TODO why 50 if the breaker is 40?
     driveConfig.encoder
       .positionConversionFactor(SwerveConstants.Module.kDrivingFactor)
       .velocityConversionFactor(SwerveConstants.Module.kDrivingFactor / 60.0);
@@ -67,7 +67,7 @@ public class MAXSwerveModule {
     steerConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
       .outputRange(-1.0, 1.0)
-      .pid(1.0, 0.0, 0.0)
+      .pid(0.5, 0.0, 0.0)
       .positionWrappingEnabled(true)
       .positionWrappingInputRange(0.0, SwerveConstants.Module.kTurningFactor);
 

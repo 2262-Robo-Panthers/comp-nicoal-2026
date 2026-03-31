@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+
 import frc.robot.auto.Auto;
 import frc.robot.subsystems.*;
 
@@ -26,6 +29,8 @@ public class RobotContainer {
   /*** private Climb m_climb = new Climb(
     Inches.of(12.0) // TODO measure this
   ); */
+
+  private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
   private Auto m_auto = new Auto(
     Commands.none()
@@ -51,6 +56,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+    
+    m_pdh.setSwitchableChannel(true);
 
     SmartDashboard.putData("Choose Auto", m_auto.getChooser());
   }
