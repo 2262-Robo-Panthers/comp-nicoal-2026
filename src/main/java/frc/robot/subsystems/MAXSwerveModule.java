@@ -58,7 +58,7 @@ public class MAXSwerveModule {
 
     steerConfig
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(20);
+      .smartCurrentLimit(50);
     steerConfig.absoluteEncoder
       .inverted(true)
       .positionConversionFactor(SwerveConstants.Module.kTurningFactor)
@@ -67,7 +67,7 @@ public class MAXSwerveModule {
     steerConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
       .outputRange(-1.0, 1.0)
-      .pid(0.5, 0.0, 0.0)
+      .pid(1.0, 0.0, 0.0)
       .positionWrappingEnabled(true)
       .positionWrappingInputRange(0.0, SwerveConstants.Module.kTurningFactor);
 
