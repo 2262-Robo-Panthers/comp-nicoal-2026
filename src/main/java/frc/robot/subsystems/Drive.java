@@ -9,8 +9,11 @@ import static frc.robot.util.SwerveConstants.Drive.*;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.hal.*;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.*;
@@ -26,7 +29,7 @@ public class Drive extends SubsystemBase {
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
   // Odometry class for tracking robot pose
-  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+  private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
     kDriveKinematics,
     Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
     new SwerveModulePosition[] {
@@ -34,7 +37,10 @@ public class Drive extends SubsystemBase {
       m_swerveFR.getPosition(),
       m_swerveRL.getPosition(),
       m_swerveRR.getPosition()
-    }
+    },
+    new Pose2d(),
+    VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+    VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30))
   );
 
   public Drive() {
@@ -48,7 +54,7 @@ public class Drive extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    m_odometry.update(
+    m_poseEstimator.update(
       Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
       new SwerveModulePosition[] {
         m_swerveFL.getPosition(),
@@ -60,21 +66,12 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Returns the currently-estimated pose of the robot.
-   *
-   * @return The pose.
-   */
-  public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
-  }
-
-  /**
    * Resets the odometry to the specified pose.
    *
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(
+    m_poseEstimator.resetPosition(
       Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
       new SwerveModulePosition[] {
         m_swerveFL.getPosition(),
@@ -154,6 +151,15 @@ public class Drive extends SubsystemBase {
   }
 
   /**
+   * Returns the turn rate of the robot.
+   *
+   * @return The turn rate of the robot, in degrees per second
+   */
+  public double getTurnRate() {
+    return m_gyro.getRate(IMUAxis.kZ);
+  }
+
+  /**
    * Returns the heading of the robot.
    *
    * @return the robot's heading in degrees, from -180 to 180
@@ -163,11 +169,15 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Returns the turn rate of the robot.
+   * Returns the currently-estimated pose of the robot.
    *
-   * @return The turn rate of the robot, in degrees per second
+   * @return The pose.
    */
-  public double getTurnRate() {
-    return m_gyro.getRate(IMUAxis.kZ);
+  public Pose2d getPose() {
+    return m_poseEstimator.getEstimatedPosition();
+  }
+
+  public SwerveDrivePoseEstimator getPoseEstimator() {
+    return m_poseEstimator;
   }
 }

@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
 
     config
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(20);
+      .smartCurrentLimit(40);
 
     m_rollers.configure(
       config,

@@ -26,9 +26,9 @@ public class RobotContainer {
 
   private Shooter m_shooter = new Shooter();
 
-  /*** private Climb m_climb = new Climb(
+  private Climb m_climb = new Climb(
     Inches.of(12.0) // TODO measure this
-  ); */
+  );
 
   private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
@@ -56,7 +56,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
-    
+
     m_pdh.setSwitchableChannel(true);
 
     SmartDashboard.putData("Choose Auto", m_auto.getChooser());
@@ -168,14 +168,29 @@ public class RobotContainer {
     }
 
     /*** Climb */
-    /*** {
+    {
       m_climb.setDefaultCommand(
         m_climb.cmd_moveSetpoint(() ->
           m_operator.getHID().getPOV() == 90 ?
           MathUtil.applyDeadband(m_operator.getRightTriggerAxis() - m_operator.getLeftTriggerAxis(), kControllerDeadband) :
           0.0
         ));
-    }*/
+    }
+
+    /*** Vision */
+    {
+      // temporary impossible keybind while we don't have one
+      m_operator.a().and(m_operator.a().negate())
+        .onTrue(
+          new InstantCommand(() -> LimelightHelpers.triggerSnapshot("")) // screenshot
+        );
+
+      // temporary impossible keybind while we don't have one
+      m_operator.a().and(m_operator.a().negate())
+        .onTrue(
+          new InstantCommand(() -> LimelightHelpers.triggerRewindCapture("", 30.0)) // clip last 30 seconds
+        );
+    }
   }
 
   public Command getAutonomousCommand() {

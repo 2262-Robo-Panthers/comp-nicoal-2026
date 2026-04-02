@@ -29,10 +29,17 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // External IMU mode (only to initialize)
+    LimelightHelpers.SetIMUMode("", 1);
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    // Internal IMU mode (with assist from AprilTags)
+    LimelightHelpers.SetIMUMode("", 3);
+    LimelightHelpers.SetIMUAssistAlpha("", 0.001);
+  }
 
   @Override
   public void autonomousInit() {
