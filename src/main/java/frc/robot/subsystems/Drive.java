@@ -140,29 +140,19 @@ public class Drive extends SubsystemBase {
     double ySpeedDelivered = ySpeed * kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * kMaxAngularSpeed;
 
-    var swerveModuleStates = kDriveKinematics.toSwerveModuleStates(
-      ChassisSpeeds.fromFieldRelativeSpeeds(
-        xSpeedDelivered, ySpeedDelivered, rotDelivered,
-        Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ))
-      ));
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, kMaxSpeedMetersPerSecond);
+    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+      xSpeedDelivered, ySpeedDelivered, rotDelivered,
+      Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ))
+    );
 
-    m_swerveFL.setDesiredState(swerveModuleStates[0]);
-    m_swerveFR.setDesiredState(swerveModuleStates[1]);
-    m_swerveRL.setDesiredState(swerveModuleStates[2]);
-    m_swerveRR.setDesiredState(swerveModuleStates[3]);
+    driveRobotRelative(speeds, null);
   }
 
   public void driveRobotRelative(ChassisSpeeds speeds, DriveFeedforwards feedforwards) {
-    var swerveModuleStates = kDriveKinematics.toSwerveModuleStates(speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, kMaxSpeedMetersPerSecond);
+    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
 
-    m_swerveFL.setDesiredState(swerveModuleStates[0]);
-    m_swerveFR.setDesiredState(swerveModuleStates[1]);
-    m_swerveRL.setDesiredState(swerveModuleStates[2]);
-    m_swerveRR.setDesiredState(swerveModuleStates[3]);
+    SwerveModuleState[] states = kDriveKinematics.toSwerveModuleStates(discretized);
+    setModuleStates(states);
   }
 
   public Command cmd_manualDrive(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rot) {
