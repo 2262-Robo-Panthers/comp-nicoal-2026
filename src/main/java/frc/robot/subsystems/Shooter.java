@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
   private SparkClosedLoopController m_feed = m_ctrlC.getClosedLoopController();
 
   private Servo m_servo = new Servo(0);
-  private double m_hoodPosition = 0.265;
+  private double m_hoodPosition = 0.35;
 
   public Shooter() {
   // public Shooter(AngularVelocity flywheelSpeed, AngularVelocity feedSpeed, AngularVelocity shootableThreshold) {
