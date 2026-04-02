@@ -30,6 +30,7 @@ public class Vision extends SubsystemBase {
 
     LimelightHelpers.setPipelineIndex("", 0);
     LimelightHelpers.setupPortForwardingUSB(0);
+    LimelightHelpers.setStreamMode_PiPSecondary("");
 
     // LimelightHelpers.setRewindEnabled("", true);
     LimelightHelpers.setRewindEnabled("", false);
