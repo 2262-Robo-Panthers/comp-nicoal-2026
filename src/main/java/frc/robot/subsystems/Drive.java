@@ -8,11 +8,13 @@ import static frc.robot.util.SwerveConstants.Drive.*;
 
 import java.util.function.DoubleSupplier;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
+
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.config.PIDConstants;
+// import com.pathplanner.lib.config.RobotConfig;
+// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+// import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.hal.*;
 import edu.wpi.first.math.VecBuilder;
@@ -57,8 +59,9 @@ public class Drive extends SubsystemBase {
       FRCNetComm.tResourceType.kResourceType_RobotDrive,
       FRCNetComm.tInstances.kRobotDriveSwerve_MaxSwerve
     );
+  }
 
-    RobotConfig config = null;
+  /*RobotConfig config = null;
 
     try {
       config = RobotConfig.fromGUISettings();
@@ -75,12 +78,12 @@ public class Drive extends SubsystemBase {
       new PPHolonomicDriveController(
         new PIDConstants(5.0, 0.0, 0.0),
         new PIDConstants(5.0, 0.0, 0.0)
-      ),
+      ), 
       config,
       () -> DriverStation.getAlliance().orElse(Alliance.Blue) != Alliance.Blue,
       this
     );
-  }
+  } */
 
   @Override
   public void periodic() {
