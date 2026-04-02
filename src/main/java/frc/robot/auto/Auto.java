@@ -1,19 +1,22 @@
 package frc.robot.auto;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Auto {
-  public SendableChooser<Command> m_chooser = new SendableChooser<>();
+  public SendableChooser<Command> m_chooser;
 
   public Auto(Command... commands) {
+    m_chooser = AutoBuilder.buildAutoChooser();
+
     for (int i = 0; i < commands.length; i++) {
-      if (i == 0) {
-        m_chooser.setDefaultOption(commands[i].getName(), commands[i]);
-      } else {
-        m_chooser.addOption(commands[i].getName(), commands[i]);
-      }
+      m_chooser.addOption("[Basic] " + commands[i].getName(), commands[i]);
     }
+
+    SmartDashboard.putData("Choose Auto", m_chooser);
   }
 
   public SendableChooser<Command> getChooser() {

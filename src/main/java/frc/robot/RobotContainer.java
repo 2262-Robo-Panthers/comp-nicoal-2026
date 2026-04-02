@@ -30,24 +30,12 @@ public class RobotContainer {
     Inches.of(12.0) // TODO measure this
   );
 
-  private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
-
   private Auto m_auto = new Auto(
-    Commands.none()
-      .withName("Do Nothing"),
-    // TODO add autonomous commands
-    m_drive.cmd_manualDrive(() -> 1.0, () -> 0.0, () -> 0.0)
-      .raceWith(Commands.waitSeconds(3.0))
-      .withName("Drive Forward 3s"),
-      // Add auto
-    Commands.sequence(
-      m_shooter.cmd_manualShoot(1.0, () -> 0.0)
-        .raceWith(Commands.waitSeconds(3.0)),
-      m_shooter.cmd_manualShoot(1.0, () -> 1.0)
-        .raceWith(Commands.waitSeconds(6.0)),
-      m_shooter.cmd_stop()
-    ).withName("Shoot")
+    // non-pathplanner autos here
+    Commands.none().withName("Do nothing")
   );
+
+  private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
   private CommandXboxController m_driver = new CommandXboxController(0);
   private CommandXboxController m_operator = new CommandXboxController(1);
@@ -58,8 +46,6 @@ public class RobotContainer {
     configureBindings();
 
     m_pdh.setSwitchableChannel(true);
-
-    SmartDashboard.putData("Choose Auto", m_auto.getChooser());
   }
 
   private void configureBindings() {
