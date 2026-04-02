@@ -24,8 +24,8 @@ public class Vision extends SubsystemBase {
 
   private Field2d m_fieldWidget = new Field2d();
 
-  public Vision(ADIS16470_IMU gyro, Drive drive) {
-    m_gyro = gyro;
+  public Vision(Drive drive) {
+    m_gyro = drive.getGyro();
     m_drive = drive;
 
     LimelightHelpers.setPipelineIndex("", 0);

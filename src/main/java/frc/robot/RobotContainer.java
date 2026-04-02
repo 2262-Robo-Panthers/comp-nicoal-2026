@@ -20,6 +20,8 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
   private Drive m_drive = new Drive();
 
+  private Vision m_vision = new Vision(m_drive);
+
   private Intake m_intake = new Intake(
     /* roller strength */ 1.0
   );
@@ -157,8 +159,8 @@ public class RobotContainer {
     {
       m_climb.setDefaultCommand(
         m_climb.cmd_moveSetpoint(() ->
-          m_operator.getHID().getPOV() == 90 ?
-          MathUtil.applyDeadband(m_operator.getRightTriggerAxis() - m_operator.getLeftTriggerAxis(), kControllerDeadband) :
+          m_driver.getHID().getPOV() == 90 ?
+          MathUtil.applyDeadband(m_driver.getRightTriggerAxis() - m_driver.getLeftTriggerAxis(), kControllerDeadband) :
           0.0
         ));
     }

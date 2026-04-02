@@ -23,9 +23,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.*;
 
 public class Drive extends SubsystemBase {
@@ -201,6 +199,10 @@ public class Drive extends SubsystemBase {
     m_swerveRL.resetDriveEncoder();
     m_swerveFR.resetDriveEncoder();
     m_swerveRR.resetDriveEncoder();
+  }
+
+  public ADIS16470_IMU getGyro() {
+    return m_gyro;
   }
 
   /** Zeroes the heading of the robot. */
