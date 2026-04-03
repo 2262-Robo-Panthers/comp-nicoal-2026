@@ -7,10 +7,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Auto {
-  public SendableChooser<Command> m_chooser = new SendableChooser<>();
+  public SendableChooser<Command> m_chooser;
 
   public Auto(Command... commands) {
     // m_chooser = AutoBuilder.buildAutoChooser();
+    m_chooser = new SendableChooser<>();
 
     for (int i = 0; i < commands.length; i++) {
       m_chooser.addOption("[Basic] " + commands[i].getName(), commands[i]);
