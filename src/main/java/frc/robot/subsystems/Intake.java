@@ -48,6 +48,15 @@ public class Intake extends SubsystemBase {
     return runOnce(() -> m_solenoid.set(value));
   }
 
+  public Command cmd_toggleExtension() {
+    return runOnce(() -> {
+      if (m_solenoid.get() == kForward)
+        m_solenoid.set(kReverse);
+      else
+        m_solenoid.set(kForward);
+    });
+  }
+
   public Command cmd_setRollers(boolean on) {
     return runOnce(() -> {
       m_rollers.set(on ? m_speed : 0.0);

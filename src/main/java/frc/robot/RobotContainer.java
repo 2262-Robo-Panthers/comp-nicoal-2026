@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -32,10 +34,7 @@ public class RobotContainer {
     Inches.of(12.0) // TODO measure this
   );
 
-  private Auto m_auto = new Auto(
-    // non-pathplanner autos here
-    Commands.none().withName("Do nothing")
-  );
+  private Auto m_auto;
 
   private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
@@ -45,9 +44,30 @@ public class RobotContainer {
   private static final double kControllerDeadband = 0.07;
 
   public RobotContainer() {
+    registerCommands();
     configureBindings();
 
     m_pdh.setSwitchableChannel(true);
+  }
+
+  private void registerCommands() {
+    NamedCommands.registerCommand(
+      "Spin Up",
+      m_shooter.cmd_instantSpinUp()
+    );
+    NamedCommands.registerCommand(
+      "Run Intake + Feeder",
+      m_shooter.cmd_instantFeed().alongWith(m_intake.cmd_setRollers(true))
+    );
+    NamedCommands.registerCommand(
+      "Stop All",
+      m_shooter.cmd_stop().alongWith(m_intake.cmd_setRollers(false))
+    );
+
+    m_auto = new Auto(
+      // non-pathplanner autos here
+      Commands.none().withName("Do nothing")
+    );
   }
 
   private void configureBindings() {
@@ -106,6 +126,11 @@ public class RobotContainer {
       m_operator.b().and(m_operator.rightBumper())
         .onTrue(
           m_intake.cmd_setRollers(true)
+        );
+
+      m_operator.y()
+        .onTrue(
+          m_intake.cmd_toggleExtension()
         );
     }
 

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.318831979851974,
-        "y": 7.032521030359101
+        "x": 2.5733806166137008,
+        "y": 7.238879656603108
       },
       "isLocked": false,
       "linkedName": null
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Spin Up",
-      "waypointRelativePos": 0.54770011697861,
+      "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": null
     }

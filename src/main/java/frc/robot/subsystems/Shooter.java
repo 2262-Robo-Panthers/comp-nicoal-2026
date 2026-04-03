@@ -143,6 +143,14 @@ public class Shooter extends SubsystemBase {
       .withName("Spinning Up");
   }
 
+  public Command cmd_instantSpinUp() {
+    return runOnce(() -> flywheel(1.0));
+  }
+
+  public Command cmd_instantFeed() {
+    return runOnce(() -> feed(1.0));
+  }
+
   public Command cmd_manualShoot(double flywheel, DoubleSupplier feed) {
     return run(() -> feed(feed.getAsDouble()))
       .beforeStarting(cmd_waitSpinUp())
