@@ -16,7 +16,7 @@ public class Auto {
       m_chooser.addOption("[Basic] " + commands[i].getName(), commands[i]);
     }
 
-    SmartDashboard.putData("Choose Auto", m_chooser);
+    SmartDashboard.putData("Auto.Choose", m_chooser);
   }
 
   public SendableChooser<Command> getChooser() {

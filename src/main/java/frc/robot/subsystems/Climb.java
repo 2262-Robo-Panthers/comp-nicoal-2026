@@ -36,7 +36,7 @@ public class Climb extends SubsystemBase {
 
     configA
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(40);
+      .smartCurrentLimit(50);
     configA.encoder
       .positionConversionFactor(0.0625 / (m_travelLength.div(kCircumference)).magnitude());
     configA.closedLoop
@@ -59,7 +59,7 @@ public class Climb extends SubsystemBase {
 
     configB
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(40)
+      .smartCurrentLimit(50)
       .follow(m_ctrlA, false);
 
     m_ctrlB.configure(

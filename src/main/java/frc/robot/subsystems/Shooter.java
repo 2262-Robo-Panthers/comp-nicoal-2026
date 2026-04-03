@@ -86,7 +86,7 @@ public class Shooter extends SubsystemBase {
     configC
       .inverted(true)
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(20);
+      .smartCurrentLimit(25);
     configC.encoder
       .positionConversionFactor(0.1)
       .velocityConversionFactor(0.1);
