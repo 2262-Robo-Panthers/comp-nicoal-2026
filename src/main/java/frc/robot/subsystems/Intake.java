@@ -57,10 +57,8 @@ public class Intake extends SubsystemBase {
     });
   }
 
-  public Command cmd_setRollers(boolean on) {
-    return runOnce(() -> {
-      m_rollers.set(on ? m_speed : 0.0);
-    });
+  public Command cmd_setRollers(double speed) {
+    return runOnce(() -> m_rollers.set(m_speed * speed));
   }
 
   public Command cmd_toggleRollers() {

@@ -10,11 +10,11 @@ import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.util.DriveFeedforwards;
 
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.config.PIDConstants;
-// import com.pathplanner.lib.config.RobotConfig;
-// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-// import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.hal.*;
 import edu.wpi.first.math.VecBuilder;
@@ -23,7 +23,9 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.*;
 
 public class Drive extends SubsystemBase {
@@ -57,9 +59,8 @@ public class Drive extends SubsystemBase {
       FRCNetComm.tResourceType.kResourceType_RobotDrive,
       FRCNetComm.tInstances.kRobotDriveSwerve_MaxSwerve
     );
-  }
 
-  /*RobotConfig config = null;
+    RobotConfig config = null;
 
     try {
       config = RobotConfig.fromGUISettings();
@@ -81,7 +82,7 @@ public class Drive extends SubsystemBase {
       () -> DriverStation.getAlliance().orElse(Alliance.Blue) != Alliance.Blue,
       this
     );
-  } */
+  }
 
   @Override
   public void periodic() {

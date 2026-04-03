@@ -53,15 +53,15 @@ public class RobotContainer {
   private void registerCommands() {
     NamedCommands.registerCommand(
       "Spin Up",
-      m_shooter.cmd_instantSpinUp()
+      m_shooter.cmd_instantSpinUp(0.85)
     );
     NamedCommands.registerCommand(
       "Run Intake + Feeder",
-      m_shooter.cmd_instantFeed().alongWith(m_intake.cmd_setRollers(true))
+      m_shooter.cmd_instantFeed().alongWith(m_intake.cmd_setRollers(1.0))
     );
     NamedCommands.registerCommand(
       "Stop All",
-      m_shooter.cmd_stop().alongWith(m_intake.cmd_setRollers(false))
+      m_intake.cmd_setRollers(0.0).alongWith(m_shooter.cmd_stop())
     );
 
     m_auto = new Auto(
@@ -113,7 +113,7 @@ public class RobotContainer {
 
       m_operator.a().and(m_operator.rightBumper())
         .onTrue(
-          m_intake.cmd_setRollers(false)
+          m_intake.cmd_setRollers(0.0)
         );
 
       // Press B to extend; with right bumper to also enable rollers
@@ -125,7 +125,7 @@ public class RobotContainer {
 
       m_operator.b().and(m_operator.rightBumper())
         .onTrue(
-          m_intake.cmd_setRollers(true)
+          m_intake.cmd_setRollers(1.0)
         );
 
       m_operator.y()
