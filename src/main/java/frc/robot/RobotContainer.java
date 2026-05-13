@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
 import frc.robot.auto.Auto;
@@ -48,6 +49,11 @@ public class RobotContainer {
     configureBindings();
 
     m_pdh.setSwitchableChannel(true);
+  }
+
+  public void periodic() {
+    SmartDashboard.putNumber("Robot.PdhVoltage", m_pdh.getVoltage());
+    SmartDashboard.putNumber("Robot.RioVoltage", RobotController.getBatteryVoltage());
   }
 
   private void registerCommands() {
@@ -183,11 +189,8 @@ public class RobotContainer {
     /*** Climb */
     {
       m_climb.setDefaultCommand(
-        m_climb.cmd_moveSetpoint(() ->
-          m_driver.getHID().getPOV() == 90 ?
-          MathUtil.applyDeadband(m_driver.getRightTriggerAxis() - m_driver.getLeftTriggerAxis(), kControllerDeadband) :
-          0.0
-        ));
+        m_climb.cmd_moveSetpoint(() -> MathUtil.applyDeadband(m_driver.getRightTriggerAxis() - m_driver.getLeftTriggerAxis(), kControllerDeadband))
+      );
     }
 
     /*** Vision */

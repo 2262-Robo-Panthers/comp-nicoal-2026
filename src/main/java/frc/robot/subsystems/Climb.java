@@ -35,19 +35,16 @@ public class Climb extends SubsystemBase {
     SparkMaxConfig configA = new SparkMaxConfig();
 
     configA
+      .inverted(true)
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(50);
     configA.encoder
-      .positionConversionFactor(0.0625 / (m_travelLength.div(kCircumference)).magnitude());
+      // .positionConversionFactor(0.0625 / (m_travelLength.div(kCircumference)).magnitude());
+      .positionConversionFactor(1.0);
     configA.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .outputRange(-1.0, 1.0)
-      .pid(0.0, 0.0, 0.0);
-    // if it doesn't work then comment out the next 4 lines and change line 82 to kPosition
-    configA.closedLoop.maxMotion
-      .cruiseVelocity(6.0 / kCircumference.magnitude()) // TODO tune these
-      .maxAcceleration(12.0 / kCircumference.magnitude())
-      .allowedProfileError(2.0);
+      .pid(1.0, 0.0, 0.0);
 
     m_ctrlA.configure(
       configA,
@@ -69,15 +66,16 @@ public class Climb extends SubsystemBase {
     );
 
     m_ctrlA.getEncoder().setPosition(0.0);
+    m_ctrlB.getEncoder().setPosition(0.0);
   }
 
   public Command cmd_moveSetpoint(DoubleSupplier delta) {
-    return run(() -> moveSetpoint(delta.getAsDouble()*(1.0/50)));
+    return run(() -> moveSetpoint(delta.getAsDouble()*(16.0/50)));
   }
 
   public void setSetpoint(double setpoint) {
-    m_setpoint = Math.max(0.0, Math.min(setpoint, 1.0));
-    m_elevator.setSetpoint(setpoint, ControlType.kMAXMotionPositionControl);
+    m_setpoint = Math.max(0.0, Math.min(setpoint, 28.6));
+    m_elevator.setSetpoint(setpoint, ControlType.kPosition);
   }
 
   public void moveSetpoint(double delta) {
