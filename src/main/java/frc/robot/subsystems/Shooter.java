@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
   private SparkClosedLoopController m_feed = m_ctrlC.getClosedLoopController();
 
   private Servo m_servo = new Servo(0);
-  private double m_hoodPosition = 0.265;
+  private double m_hoodPosition = 0.35;
 
   public Shooter() {
   // public Shooter(AngularVelocity flywheelSpeed, AngularVelocity feedSpeed, AngularVelocity shootableThreshold) {
@@ -86,7 +86,7 @@ public class Shooter extends SubsystemBase {
     configC
       .inverted(true)
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(20);
+      .smartCurrentLimit(25);
     configC.encoder
       .positionConversionFactor(0.1)
       .velocityConversionFactor(0.1);
@@ -141,6 +141,14 @@ public class Shooter extends SubsystemBase {
       .beforeStarting(runOnce(() -> flywheel(1.0)))
       .withTimeout(3.0)
       .withName("Spinning Up");
+  }
+
+  public Command cmd_instantSpinUp(double speed) {
+    return runOnce(() -> flywheel(speed));
+  }
+
+  public Command cmd_instantFeed() {
+    return runOnce(() -> feed(1.0));
   }
 
   public Command cmd_manualShoot(double flywheel, DoubleSupplier feed) {

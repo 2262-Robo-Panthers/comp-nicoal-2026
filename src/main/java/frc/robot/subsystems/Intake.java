@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
 
     config
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(20);
+      .smartCurrentLimit(40);
 
     m_rollers.configure(
       config,
@@ -48,10 +48,17 @@ public class Intake extends SubsystemBase {
     return runOnce(() -> m_solenoid.set(value));
   }
 
-  public Command cmd_setRollers(boolean on) {
+  public Command cmd_toggleExtension() {
     return runOnce(() -> {
-      m_rollers.set(on ? m_speed : 0.0);
+      if (m_solenoid.get() == kForward)
+        m_solenoid.set(kReverse);
+      else
+        m_solenoid.set(kForward);
     });
+  }
+
+  public Command cmd_setRollers(double speed) {
+    return runOnce(() -> m_rollers.set(m_speed * speed));
   }
 
   public Command cmd_toggleRollers() {

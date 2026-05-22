@@ -6,10 +6,16 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
+
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
 import frc.robot.auto.Auto;
 import frc.robot.subsystems.*;
@@ -17,32 +23,21 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
   private Drive m_drive = new Drive();
 
+  private Vision m_vision = new Vision(m_drive);
+
   private Intake m_intake = new Intake(
     /* roller strength */ 1.0
   );
 
   private Shooter m_shooter = new Shooter();
 
-  /*** private Climb m_climb = new Climb(
+  private Climb m_climb = new Climb(
     Inches.of(12.0) // TODO measure this
-  ); */
-
-  private Auto m_auto = new Auto(
-    Commands.none()
-      .withName("Do Nothing"),
-    // TODO add autonomous commands
-    m_drive.cmd_manualDrive(() -> 1.0, () -> 0.0, () -> 0.0)
-      .raceWith(Commands.waitSeconds(3.0))
-      .withName("Drive Forward 3s"),
-      // Add auto
-    Commands.sequence(
-      m_shooter.cmd_manualShoot(1.0, () -> 0.0)
-        .raceWith(Commands.waitSeconds(3.0)),
-      m_shooter.cmd_manualShoot(1.0, () -> 1.0)
-        .raceWith(Commands.waitSeconds(6.0)),
-      m_shooter.cmd_stop()
-    ).withName("Shoot")
   );
+
+  private Auto m_auto;
+
+  private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
   private CommandXboxController m_driver = new CommandXboxController(0);
   private CommandXboxController m_operator = new CommandXboxController(1);
@@ -50,9 +45,35 @@ public class RobotContainer {
   private static final double kControllerDeadband = 0.07;
 
   public RobotContainer() {
+    registerCommands();
     configureBindings();
 
-    SmartDashboard.putData("Choose Auto", m_auto.getChooser());
+    m_pdh.setSwitchableChannel(true);
+  }
+
+  public void periodic() {
+    SmartDashboard.putNumber("Robot.PdhVoltage", m_pdh.getVoltage());
+    SmartDashboard.putNumber("Robot.RioVoltage", RobotController.getBatteryVoltage());
+  }
+
+  private void registerCommands() {
+    NamedCommands.registerCommand(
+      "Spin Up",
+      m_shooter.cmd_instantSpinUp(0.85)
+    );
+    NamedCommands.registerCommand(
+      "Run Intake + Feeder",
+      m_shooter.cmd_instantFeed().alongWith(m_intake.cmd_setRollers(1.0))
+    );
+    NamedCommands.registerCommand(
+      "Stop All",
+      m_intake.cmd_setRollers(0.0).alongWith(m_shooter.cmd_stop())
+    );
+
+    m_auto = new Auto(
+      // non-pathplanner autos here
+      Commands.none().withName("Do nothing")
+    );
   }
 
   private void configureBindings() {
@@ -98,7 +119,7 @@ public class RobotContainer {
 
       m_operator.a().and(m_operator.rightBumper())
         .onTrue(
-          m_intake.cmd_setRollers(false)
+          m_intake.cmd_setRollers(0.0)
         );
 
       // Press B to extend; with right bumper to also enable rollers
@@ -110,7 +131,12 @@ public class RobotContainer {
 
       m_operator.b().and(m_operator.rightBumper())
         .onTrue(
-          m_intake.cmd_setRollers(true)
+          m_intake.cmd_setRollers(1.0)
+        );
+
+      m_operator.y()
+        .onTrue(
+          m_intake.cmd_toggleExtension()
         );
     }
 
@@ -161,14 +187,26 @@ public class RobotContainer {
     }
 
     /*** Climb */
-    /*** {
+    {
       m_climb.setDefaultCommand(
-        m_climb.cmd_moveSetpoint(() ->
-          m_operator.getHID().getPOV() == 90 ?
-          MathUtil.applyDeadband(m_operator.getRightTriggerAxis() - m_operator.getLeftTriggerAxis(), kControllerDeadband) :
-          0.0
-        ));
-    }*/
+        m_climb.cmd_moveSetpoint(() -> MathUtil.applyDeadband(m_driver.getRightTriggerAxis() - m_driver.getLeftTriggerAxis(), kControllerDeadband))
+      );
+    }
+
+    /*** Vision */
+    {
+      // temporary impossible keybind while we don't have one
+      m_operator.a().and(m_operator.a().negate())
+        .onTrue(
+          new InstantCommand(() -> LimelightHelpers.triggerSnapshot("")) // screenshot
+        );
+
+      // temporary impossible keybind while we don't have one
+      m_operator.a().and(m_operator.a().negate())
+        .onTrue(
+          new InstantCommand(() -> LimelightHelpers.triggerRewindCapture("", 30.0)) // clip last 30 seconds
+        );
+    }
   }
 
   public Command getAutonomousCommand() {
