@@ -28,8 +28,10 @@ public class Shooter extends SubsystemBase {
   private SparkClosedLoopController m_flywheel = m_ctrlA.getClosedLoopController();
 
   private SparkMax m_ctrlC = new SparkMax(8, SparkMax.MotorType.kBrushless);
+  private SparkMax m_ctrlD = new SparkMax(37, SparkMax.MotorType.kBrushed);
 
   private SparkClosedLoopController m_feed = m_ctrlC.getClosedLoopController();
+  private SparkClosedLoopController m_feedFollower = m_ctrlD.getClosedLoopController();
 
   private Servo m_servo = new Servo(0);
   private double m_hoodPosition = 0.35;
@@ -97,6 +99,19 @@ public class Shooter extends SubsystemBase {
 
     m_ctrlC.configure(
       configC,
+      ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters
+    );
+
+    SparkMaxConfig configD = new SparkMaxConfig();
+
+    configD
+      .idleMode(IdleMode.kCoast)
+      .smartCurrentLimit(25)
+      .follow(m_ctrlC, true);
+
+    m_ctrlD.configure(
+      configD,
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters
     );
